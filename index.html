@@ -11,376 +11,377 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.1/papaparse.min.js"></script>
 </head>
 <body>
-    <div id="loading" class="loading">
-        <div class="loader"></div>
-    </div>
-
-    <div class="dashboard-container p-4">
-        <header class="bg-white rounded-lg shadow-md p-4 mb-6">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h1 class="text-2xl font-bold text-gray-800">Walmart Store Sales Analytics Dashboard</h1>
-                    <p class="text-gray-600">Data-driven insights for 45 stores (2010-2012)</p>
-                </div>
-                <div class="flex items-center">
-                    <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold mr-3">
-                        <i class="fas fa-calendar-alt mr-1"></i> Last Updated: <span id="last-updated">Loading...</span>
-                    </div>
-                    <div class="tooltip">
-                        <button onclick="window.open('https://www.kaggle.com/datasets/mikhail1681/walmart-sales', '_blank')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
-                            <i class="fas fa-info-circle"></i> Data Source 
-                        </button>
-                        <span class="tooltiptext">Data from Walmart Recruiting – Store Sales Forecasting dataset on Kaggle</span>
-                    </div>
-                </div>
+    <!-- Sidebar Layout -->
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="sidebar bg-white shadow-md flex flex-col w-72 min-h-screen p-6">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-800">Walmart Store Sales Analytics Dashboard</h1>
+                <p class="text-gray-600">Data-driven insights for 45 stores (2010-2012)</p>
             </div>
-        </header>
-
-        <!-- Dashboard Navigation -->
-        <div class="bg-white rounded-lg shadow-md mb-6">
-            <div class="flex overflow-x-auto py-3 px-4 border-b nav-tabs">
-                <div class="nav-item active px-4 py-2 mx-2" data-target="descriptive">
+            <div class="flex flex-col nav-tabs">
+                <div class="nav-item active px-4 py-3 mb-2" data-target="descriptive">
                     <i class="fas fa-chart-bar mr-2"></i> Descriptive Analytics
                 </div>
-                <div class="nav-item px-4 py-2 mx-2" data-target="diagnostic">
+                <div class="nav-item px-4 py-3 mb-2" data-target="diagnostic">
                     <i class="fas fa-search mr-2"></i> Diagnostic Analytics
                 </div>
-                <div class="nav-item px-4 py-2 mx-2" data-target="predictive">
+                <div class="nav-item px-4 py-3 mb-2" data-target="predictive">
                     <i class="fas fa-chart-line mr-2"></i> Predictive Analytics
                 </div>
-                <div class="nav-item px-4 py-2 mx-2" data-target="prescriptive">
+                <div class="nav-item px-4 py-3 mb-2" data-target="prescriptive">
                     <i class="fas fa-lightbulb mr-2"></i> Prescriptive Analytics
                 </div>
             </div>
+            <div class="mt-auto">
+                <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold mb-3">
+                    <i class="fas fa-calendar-alt mr-1"></i> Last Updated: <span id="last-updated">Loading...</span>
+                </div>
+                <div class="tooltip">
+                    <button onclick="window.open('https://www.kaggle.com/datasets/mikhail1681/walmart-sales', '_blank')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                        <i class="fas fa-info-circle"></i> Data Source 
+                    </button>
+                    <span class="tooltiptext">Data from Walmart Recruiting – Store Sales Forecasting dataset on Kaggle</span>
+                </div>
+            </div>
+        </aside>
+        <!-- Main Content -->
+        <div class="flex-1">
+            <div class="dashboard-container p-4">
+                <!-- Dashboard Content -->
+                <div class="analytics-content">
+                    <!-- Descriptive Analytics Section -->
+                    <section id="descriptive" class="analytics-section active">
+                        <h2 class="text-xl font-bold mb-4 text-gray-700">Descriptive Analytics: What happened?</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="card p-4">
+                                <h3 class="text-gray-500 text-sm mb-1">Total Sales</h3>
+                                <div class="flex items-end">
+                                    <span class="text-2xl font-bold text-gray-800" id="total-sales">Loading...</span>
+                                    <span class="text-sm text-gray-500 ml-2">USD</span>
+                                </div>
+                                <div class="text-xs text-gray-400 mt-1">All stores combined</div>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="text-gray-500 text-sm mb-1">Average Weekly Sales</h3>
+                                <div class="flex items-end">
+                                    <span class="text-2xl font-bold text-gray-800" id="avg-weekly-sales">Loading...</span>
+                                    <span class="text-sm text-gray-500 ml-2">USD/week</span>
+                                </div>
+                                <div class="text-xs text-gray-400 mt-1">Per store average</div>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="text-gray-500 text-sm mb-1">Average Temperature</h3>
+                                <div class="flex items-end">
+                                    <span class="text-2xl font-bold text-gray-800" id="avg-temp">Loading...</span>
+                                    <span class="text-sm text-gray-500 ml-2">°F</span>
+                                </div>
+                                <div class="text-xs text-gray-400 mt-1">Across all stores</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Sales Over Time</h3>
+                                <div class="chart-container">
+                                    <canvas id="sales-time-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Historical sales data showing seasonality and holiday effects
+                                </p>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Store Performance Comparison</h3>
+                                <div class="chart-container">
+                                    <canvas id="store-performance-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Top 10 stores by average weekly sales
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 mb-6">
+                            <h3 class="font-semibold text-gray-700 mb-3">Holiday vs Non-Holiday Sales Impact</h3>
+                            <div class="chart-container">
+                                <canvas id="holiday-impact-chart"></canvas>
+                            </div>
+                            <p class="text-gray-600 text-sm mt-3">
+                                Comparison of sales performance during holiday and non-holiday periods
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Diagnostic Analytics Section -->
+                    <section id="diagnostic" class="analytics-section">
+                        <h2 class="text-xl font-bold mb-4 text-gray-700">Diagnostic Analytics: Why did it happen?</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Sales vs Temperature</h3>
+                                <div class="chart-container">
+                                    <canvas id="sales-temp-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Correlation between weekly sales and temperature
+                                </p>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Sales vs Fuel Price</h3>
+                                <div class="chart-container">
+                                    <canvas id="sales-fuel-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Correlation between weekly sales and fuel prices
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Sales vs Unemployment</h3>
+                                <div class="chart-container">
+                                    <canvas id="sales-unemployment-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Correlation between weekly sales and unemployment rate
+                                </p>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Impact of Markdowns</h3>
+                                <div class="chart-container">
+                                    <canvas id="markdown-impact-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Effect of markdowns on weekly sales
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 mb-6">
+                            <h3 class="font-semibold text-gray-700 mb-3">Correlation Matrix: External Factors</h3>
+                            <div class="overflow-x-auto">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Factor</th>
+                                            <th>Correlation with Sales</th>
+                                            <th>Significance</th>
+                                            <th>Impact Level</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="correlation-table">
+                                        <tr>
+                                            <td colspan="4" class="text-center">Loading data...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="text-gray-600 text-sm mt-3">
+                                Strength of relationship between sales and external factors
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Predictive Analytics Section -->
+                    <section id="predictive" class="analytics-section">
+                        <h2 class="text-xl font-bold mb-4 text-gray-700">Predictive Analytics: What will happen?</h2>
+                        
+                        <div class="card p-4 mb-6">
+                            <h3 class="font-semibold text-gray-700 mb-3">Sales Forecast - Next 8 Weeks</h3>
+                            <div class="chart-container">
+                                <canvas id="forecast-chart"></canvas>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <p class="text-gray-600 text-sm">
+                                    Linear regression model based on historical data and seasonal patterns
+                                </p>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500 mr-1"></div>
+                                    <span class="text-xs mr-3">Historical</span>
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                    <span class="text-xs">Forecast</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Expected Sales by Store Type</h3>
+                                <div class="chart-container">
+                                    <canvas id="forecast-by-store-type-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Projected 8-week sales by store type
+                                </p>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Confidence Intervals</h3>
+                                <div class="chart-container">
+                                    <canvas id="confidence-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Forecast with 95% confidence intervals
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 mb-6">
+                            <h3 class="font-semibold text-gray-700 mb-3">Weekly Forecast Details</h3>
+                            <div class="overflow-x-auto">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Week</th>
+                                            <th>Forecasted Sales</th>
+                                            <th>Lower Bound</th>
+                                            <th>Upper Bound</th>
+                                            <th>Expected Change</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="forecast-table">
+                                        <tr>
+                                            <td colspan="5" class="text-center">Loading forecast data...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Prescriptive Analytics Section -->
+                    <section id="prescriptive" class="analytics-section">
+                        <h2 class="text-xl font-bold mb-4 text-gray-700">Prescriptive Analytics: What should we do?</h2>
+                        
+                        <div class="card p-4 mb-6 recommendation-card">
+                            <div class="flex items-start">
+                                <div class="rounded-full bg-blue-100 p-3 mr-4">
+                                    <i class="fas fa-lightbulb text-blue-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-blue-800 text-lg mb-2">Key Recommendations</h3>
+                                    <p class="text-gray-700 mb-3">Based on your forecasted sales for the next 8 weeks, we recommend the following actions:</p>
+                                    <ul class="space-y-2" id="recommendations-list">
+                                        <li class="flex items-center">
+                                            <div class="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+                                            <span>Loading recommendations...</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Inventory Adjustment Strategy</h3>
+                                <div class="chart-container">
+                                    <canvas id="inventory-strategy-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Recommended inventory levels based on forecasted demand
+                                </p>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="font-semibold text-gray-700 mb-3">Staffing Recommendations</h3>
+                                <div class="chart-container">
+                                    <canvas id="staffing-recs-chart"></canvas>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-3">
+                                    Suggested staffing levels aligned with sales forecasts
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="card p-4">
+                                <h3 class="text-gray-700 font-semibold mb-2">Markdown Strategy</h3>
+                                <div id="markdown-strategy" class="p-3 bg-blue-50 rounded-lg">
+                                    <div class="flex flex-col space-y-2">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Effectiveness Rating:</span>
+                                            <div class="flex">
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star-half-alt text-yellow-400"></i>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700">Timing markdowns with forecasted sales dips can increase traffic while minimizing margin impact.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="text-gray-700 font-semibold mb-2">Seasonal Planning</h3>
+                                <div id="seasonal-planning" class="p-3 bg-green-50 rounded-lg">
+                                    <div class="flex flex-col space-y-2">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Effectiveness Rating:</span>
+                                            <div class="flex">
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="far fa-star text-yellow-400"></i>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700">Prepare inventory buildup 3 weeks before forecasted seasonal peaks to prevent stockouts.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card p-4">
+                                <h3 class="text-gray-700 font-semibold mb-2">Regional Focus</h3>
+                                <div id="regional-focus" class="p-3 bg-purple-50 rounded-lg">
+                                    <div class="flex flex-col space-y-2">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Effectiveness Rating:</span>
+                                            <div class="flex">
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700">Prioritize inventory allocation to high-performance regions during forecast peaks.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-4 mb-6">
+                            <h3 class="font-semibold text-gray-700 mb-3">Expected Impact of Recommendations</h3>
+                            <div class="chart-container">
+                                <canvas id="impact-chart"></canvas>
+                            </div>
+                            <p class="text-gray-600 text-sm mt-3">
+                                Projected improvements in key metrics by implementing recommendations
+                            </p>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="mt-8 text-center text-gray-500 text-sm">
+                    <p>Based on Walmart Recruiting – Store Sales Forecasting dataset | <a href="https://www.kaggle.com/datasets/mikhail1681/walmart-sales" class="text-blue-500 hover:underline" target="_blank">View original dataset on Kaggle</a></p>
+                    <p class="mt-1">Developed by Bacay G., Seno J., and Huna J.L. using HTML, CSS, and JavaScript | Data processed with Chart.js and PapaParse</p>
+                </footer>
+            </div>
         </div>
+    </div>
 
-        <!-- Dashboard Content -->
-        <div class="analytics-content">
-            <!-- Descriptive Analytics Section -->
-            <section id="descriptive" class="analytics-section active">
-                <h2 class="text-xl font-bold mb-4 text-gray-700">Descriptive Analytics: What happened?</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="card p-4">
-                        <h3 class="text-gray-500 text-sm mb-1">Total Sales</h3>
-                        <div class="flex items-end">
-                            <span class="text-2xl font-bold text-gray-800" id="total-sales">Loading...</span>
-                            <span class="text-sm text-gray-500 ml-2">USD</span>
-                        </div>
-                        <div class="text-xs text-gray-400 mt-1">All stores combined</div>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="text-gray-500 text-sm mb-1">Average Weekly Sales</h3>
-                        <div class="flex items-end">
-                            <span class="text-2xl font-bold text-gray-800" id="avg-weekly-sales">Loading...</span>
-                            <span class="text-sm text-gray-500 ml-2">USD/week</span>
-                        </div>
-                        <div class="text-xs text-gray-400 mt-1">Per store average</div>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="text-gray-500 text-sm mb-1">Average Temperature</h3>
-                        <div class="flex items-end">
-                            <span class="text-2xl font-bold text-gray-800" id="avg-temp">Loading...</span>
-                            <span class="text-sm text-gray-500 ml-2">°F</span>
-                        </div>
-                        <div class="text-xs text-gray-400 mt-1">Across all stores</div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Sales Over Time</h3>
-                        <div class="chart-container">
-                            <canvas id="sales-time-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Historical sales data showing seasonality and holiday effects
-                        </p>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Store Performance Comparison</h3>
-                        <div class="chart-container">
-                            <canvas id="store-performance-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Top 10 stores by average weekly sales
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="card p-4 mb-6">
-                    <h3 class="font-semibold text-gray-700 mb-3">Holiday vs Non-Holiday Sales Impact</h3>
-                    <div class="chart-container">
-                        <canvas id="holiday-impact-chart"></canvas>
-                    </div>
-                    <p class="text-gray-600 text-sm mt-3">
-                        Comparison of sales performance during holiday and non-holiday periods
-                    </p>
-                </div>
-            </section>
-
-            <!-- Diagnostic Analytics Section -->
-            <section id="diagnostic" class="analytics-section">
-                <h2 class="text-xl font-bold mb-4 text-gray-700">Diagnostic Analytics: Why did it happen?</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Sales vs Temperature</h3>
-                        <div class="chart-container">
-                            <canvas id="sales-temp-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Correlation between weekly sales and temperature
-                        </p>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Sales vs Fuel Price</h3>
-                        <div class="chart-container">
-                            <canvas id="sales-fuel-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Correlation between weekly sales and fuel prices
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Sales vs Unemployment</h3>
-                        <div class="chart-container">
-                            <canvas id="sales-unemployment-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Correlation between weekly sales and unemployment rate
-                        </p>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Impact of Markdowns</h3>
-                        <div class="chart-container">
-                            <canvas id="markdown-impact-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Effect of markdowns on weekly sales
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="card p-4 mb-6">
-                    <h3 class="font-semibold text-gray-700 mb-3">Correlation Matrix: External Factors</h3>
-                    <div class="overflow-x-auto">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Factor</th>
-                                    <th>Correlation with Sales</th>
-                                    <th>Significance</th>
-                                    <th>Impact Level</th>
-                                </tr>
-                            </thead>
-                            <tbody id="correlation-table">
-                                <tr>
-                                    <td colspan="4" class="text-center">Loading data...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p class="text-gray-600 text-sm mt-3">
-                        Strength of relationship between sales and external factors
-                    </p>
-                </div>
-            </section>
-
-            <!-- Predictive Analytics Section -->
-            <section id="predictive" class="analytics-section">
-                <h2 class="text-xl font-bold mb-4 text-gray-700">Predictive Analytics: What will happen?</h2>
-                
-                <div class="card p-4 mb-6">
-                    <h3 class="font-semibold text-gray-700 mb-3">Sales Forecast - Next 8 Weeks</h3>
-                    <div class="chart-container">
-                        <canvas id="forecast-chart"></canvas>
-                    </div>
-                    <div class="flex justify-between items-center mt-3">
-                        <p class="text-gray-600 text-sm">
-                            Linear regression model based on historical data and seasonal patterns
-                        </p>
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 rounded-full bg-blue-500 mr-1"></div>
-                            <span class="text-xs mr-3">Historical</span>
-                            <div class="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                            <span class="text-xs">Forecast</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Expected Sales by Store Type</h3>
-                        <div class="chart-container">
-                            <canvas id="forecast-by-store-type-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Projected 8-week sales by store type
-                        </p>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Confidence Intervals</h3>
-                        <div class="chart-container">
-                            <canvas id="confidence-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Forecast with 95% confidence intervals
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="card p-4 mb-6">
-                    <h3 class="font-semibold text-gray-700 mb-3">Weekly Forecast Details</h3>
-                    <div class="overflow-x-auto">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Week</th>
-                                    <th>Forecasted Sales</th>
-                                    <th>Lower Bound</th>
-                                    <th>Upper Bound</th>
-                                    <th>Expected Change</th>
-                                </tr>
-                            </thead>
-                            <tbody id="forecast-table">
-                                <tr>
-                                    <td colspan="5" class="text-center">Loading forecast data...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Prescriptive Analytics Section -->
-            <section id="prescriptive" class="analytics-section">
-                <h2 class="text-xl font-bold mb-4 text-gray-700">Prescriptive Analytics: What should we do?</h2>
-                
-                <div class="card p-4 mb-6 recommendation-card">
-                    <div class="flex items-start">
-                        <div class="rounded-full bg-blue-100 p-3 mr-4">
-                            <i class="fas fa-lightbulb text-blue-600 text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-blue-800 text-lg mb-2">Key Recommendations</h3>
-                            <p class="text-gray-700 mb-3">Based on your forecasted sales for the next 8 weeks, we recommend the following actions:</p>
-                            <ul class="space-y-2" id="recommendations-list">
-                                <li class="flex items-center">
-                                    <div class="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-                                    <span>Loading recommendations...</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Inventory Adjustment Strategy</h3>
-                        <div class="chart-container">
-                            <canvas id="inventory-strategy-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Recommended inventory levels based on forecasted demand
-                        </p>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="font-semibold text-gray-700 mb-3">Staffing Recommendations</h3>
-                        <div class="chart-container">
-                            <canvas id="staffing-recs-chart"></canvas>
-                        </div>
-                        <p class="text-gray-600 text-sm mt-3">
-                            Suggested staffing levels aligned with sales forecasts
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="card p-4">
-                        <h3 class="text-gray-700 font-semibold mb-2">Markdown Strategy</h3>
-                        <div id="markdown-strategy" class="p-3 bg-blue-50 rounded-lg">
-                            <div class="flex flex-col space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Effectiveness Rating:</span>
-                                    <div class="flex">
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star-half-alt text-yellow-400"></i>
-                                    </div>
-                                </div>
-                                <p class="text-gray-700">Timing markdowns with forecasted sales dips can increase traffic while minimizing margin impact.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="text-gray-700 font-semibold mb-2">Seasonal Planning</h3>
-                        <div id="seasonal-planning" class="p-3 bg-green-50 rounded-lg">
-                            <div class="flex flex-col space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Effectiveness Rating:</span>
-                                    <div class="flex">
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="far fa-star text-yellow-400"></i>
-                                    </div>
-                                </div>
-                                <p class="text-gray-700">Prepare inventory buildup 3 weeks before forecasted seasonal peaks to prevent stockouts.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card p-4">
-                        <h3 class="text-gray-700 font-semibold mb-2">Regional Focus</h3>
-                        <div id="regional-focus" class="p-3 bg-purple-50 rounded-lg">
-                            <div class="flex flex-col space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Effectiveness Rating:</span>
-                                    <div class="flex">
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                    </div>
-                                </div>
-                                <p class="text-gray-700">Prioritize inventory allocation to high-performance regions during forecast peaks.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-4 mb-6">
-                    <h3 class="font-semibold text-gray-700 mb-3">Expected Impact of Recommendations</h3>
-                    <div class="chart-container">
-                        <canvas id="impact-chart"></canvas>
-                    </div>
-                    <p class="text-gray-600 text-sm mt-3">
-                        Projected improvements in key metrics by implementing recommendations
-                    </p>
-                </div>
-            </section>
-        </div>
-
-        <footer class="mt-8 text-center text-gray-500 text-sm">
-            <p>Based on Walmart Recruiting – Store Sales Forecasting dataset | <a href="https://www.kaggle.com/datasets/mikhail1681/walmart-sales" class="text-blue-500 hover:underline" target="_blank">View original dataset on Kaggle</a></p>
-            <p class="mt-1">Developed by Bacay G., Seno J., and Huna J.L. using HTML, CSS, and JavaScript | Data processed with Chart.js and PapaParse</p>
-        </footer>
+    <!-- Loading overlay -->
+    <div id="loading" class="loading">
+        <div class="loader"></div>
     </div>
 
     <script src="script.js"></script>
