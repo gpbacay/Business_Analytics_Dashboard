@@ -6,6 +6,7 @@ body {
 .dashboard-container {
     max-width: 100%;
     margin: 0;
+    margin-left: 20rem; /* Add left margin to avoid overlap with fixed sidebar */
 }
 .card {
     background-color: white;
@@ -163,6 +164,11 @@ body {
     min-width: 18rem;
     max-width: 20rem;
     z-index: 10;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow: hidden;
 }
 .sidebar h1 {
     font-size: 1.5rem;
@@ -202,6 +208,7 @@ body {
 .dashboard-container {
     max-width: 100%;
     margin: 0;
+    margin-left: 20rem; /* Add left margin to avoid overlap with fixed sidebar */
 }
 
 @media (max-width: 900px) {
@@ -210,6 +217,10 @@ body {
         max-width: 100%;
         position: static;
         box-shadow: none;
+        height: auto;
+    }
+    .dashboard-container {
+        margin-left: 0;
     }
     .flex {
         flex-direction: column;
